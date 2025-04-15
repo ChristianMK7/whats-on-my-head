@@ -1,0 +1,101 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background: linear-gradient(to bottom right, #013220, #000000);
+    color: white;
+}
+
+.app {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lobby, .game {
+    text-align: center;
+    max-width: 400px;
+    margin: auto;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px #0f0;
+}
+
+input, select, button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: #1a5d2b;
+    color: white;
+    cursor: pointer;
+}
+
+    button:hover {
+        background: #23a23e;
+    }
+.player-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.player {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 5px 0;
+    font-size: 18px;
+}
+
+
+.game {
+    text-align: center;
+    max-width: 400px;
+    margin: auto;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px #0f0;
+}
+.leaderboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.leaderboard-entry {
+    display: flex;
+    justify-content: space-between;
+    width: 240px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 4px 0;
+    font-size: 16px;
+    color: #fff;
+}
+.player-reveal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.player-reveal-entry {
+    font-size: 16px;
+    margin: 4px 0;
+    color: #ddd;
+}
+
