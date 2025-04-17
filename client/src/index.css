@@ -27,10 +27,13 @@ body, html {
 input, select, button {
     display: block;
     margin: 10px auto;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 14px; 
+    border-radius: 10px;
     border: none;
-    font-size: 16px;
+    font-size: 18px;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
 }
 
 button {
@@ -97,5 +100,19 @@ button {
     font-size: 16px;
     margin: 4px 0;
     color: #ddd;
+}
+@media (max-width: 600px) {
+    .lobby, .game {
+        padding: 20px;
+        max-width: 90%;
+    }
+
+    h1, h2, h3 {
+        font-size: 1.3rem;
+    }
+
+    .leaderboard-entry {
+        width: 90%;
+    }
 }
 

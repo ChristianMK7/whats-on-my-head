@@ -122,7 +122,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
 
             <h2>🤔 What everyone got:</h2>
 
-            {playerData.category === "random" && categoryUsed && (
+            {categoryUsed && (
                 <p style={{ fontSize: "0.9em", fontStyle: "italic", color: "#ccc", marginTop: "-10px", marginBottom: "10px" }}>
                     (Category: {categoryUsed})
                 </p>
@@ -156,8 +156,8 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
                         value={guess}
                         onChange={(e) => setGuess(e.target.value)}
                     />
-                    <button onClick={handleGuess}>Submit Guess</button>
-                    <button onClick={handlePassTurn}>Pass Turn</button>
+                    <button type="button" onClick={handleGuess}>Submit Guess</button>
+                    <button type="button" onClick={handlePassTurn}>Pass Turn</button>
                 </>
             )}
 

@@ -104,7 +104,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
-                    <button onClick={handleCreate}>Create Room</button>
+                    <button type="button" onClick={handleCreate}>Create Room</button>
 
                     <input
                         placeholder="Enter room code"
@@ -112,7 +112,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                         onChange={(e) => setRoomCodeInput(e.target.value)}
                         maxLength={5}
                     />
-                    <button onClick={handleJoin}>Join Room</button>
+                    <button type="button" onClick={handleJoin}>Join Room</button>
                 </>
             ) : (
                 <>
@@ -152,7 +152,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                                 <option value={15}>15</option>
                             </select>
 
-                            <button onClick={handleStart}>Start Game</button>
+                            <button type="button" onClick={handleStart}>Start Game</button>
                         </>
                     )}
                 </>
