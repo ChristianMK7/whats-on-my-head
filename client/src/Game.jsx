@@ -1,5 +1,9 @@
 ﻿import React, { useState, useEffect } from "react";
 import socket from "./socket";
+const playSound = (filename) => {
+  const audio = new Audio(`/sounds/${filename}`);
+  audio.play();
+};
 
 function Game({ playerData, setInGame, setGameOverData, setPhase}) {
     const [players, setPlayers] = useState(playerData.players || []);
@@ -38,11 +42,13 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
 
         const handleGuessResult = ({ correct, points }) => {
             if (correct) {
+                playSound("correct.mp3");
                 setFeedback("✅ Correct! You earned points!");
             } else {
+                playSound("wrong.mp3");
                 setFeedback("❌ Not quite. Try again next round.");
-                setGuess("")
             }
+            setGuess("")
             setHasGuessed(true);
         };
         socket.on("turn_updated", ({ turnIndex }) => {
@@ -52,6 +58,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
             const isNowMyTurn = currentTurnPlayer?.id === yourPlayerId;
 
             if (isNowMyTurn) {
+                playSound("turn.mp3");
                 setHasGuessed(false);
                 setFeedback("");
             }
@@ -121,12 +128,9 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
             </div>
 
             <h2>🤔 What everyone got:</h2>
-
-            {categoryUsed && (
-                <p style={{ fontSize: "0.9em", fontStyle: "italic", color: "#ccc", marginTop: "-10px", marginBottom: "10px" }}>
-                    (Category: {categoryUsed})
+                <p style={{ fontStyle: "italic", color: "#aaa" }}>
+                    Category: <strong>{categoryUsed}</strong>
                 </p>
-            )}
 
             <div className="player-reveal">
                 {players.map((p, i) => (
