@@ -120,7 +120,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                     <h2>Players:</h2>
                     <div className="player-list">
                         {players.map((p) => (
-                            <div key={p.id} className="player-name">
+                            <div key={p.id} className=" player player-name">
                                 {p.name}
                             </div>
                         ))}

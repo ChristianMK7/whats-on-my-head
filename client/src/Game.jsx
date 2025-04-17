@@ -128,9 +128,12 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
             </div>
 
             <h2>🤔 What everyone got:</h2>
-                <p style={{ fontStyle: "italic", color: "#aaa" }}>
+            {categoryUsed && (
+                <p className="category-reveal">
                     Category: <strong>{categoryUsed}</strong>
                 </p>
+            )}
+
 
             <div className="player-reveal">
                 {players.map((p, i) => (
@@ -146,7 +149,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
                     .slice()
                     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
                     .map((p, i) => (
-                        <div key={i} className="leaderboard-entry">
+                        <div key={i} className="leaderboard-entry" style={{ animationDelay: `${i * 0.1}s` }}>
                             <span>{i + 1}. {p.name}{p.item === "???" ? " (You!)" : ""}</span>
                             <span>🎯 {p.score ?? 0}</span>
                         </div>
