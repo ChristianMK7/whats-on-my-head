@@ -8,7 +8,9 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
     const [players, setPlayers] = useState([]);
     const [category, setCategory] = useState("food");
     const [pointLimit, setPointLimit] = useState(10);
-
+    const [mode, setMode] = useState("default");
+    const [customCategory, setCustomCategory] = useState("");
+    const [customWords, setCustomWords] = useState("");
     const isHost = playerData?.playerId === playerData?.hostId;
 
     useEffect(() => {
@@ -88,10 +90,30 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
             alert("You need at least 2 players to start the game.");
             return;
         }
-        socket.emit("set_category", { roomCode, category });
+
+        if (mode === "default") {
+            socket.emit("set_category", { roomCode, category });
+        } else {
+            if (!customCategory.trim() || !customWords.trim()) {
+                alert("Please enter both a category name and at least one word.");
+                return;
+            }
+            const wordsArray = customWords.split(",").map(w => w.trim()).filter(Boolean);
+            if (wordsArray.length < 2) {
+                alert("You need at least 2 words for the custom category.");
+                return;
+            }
+            socket.emit("set_custom_category", {
+                roomCode,
+                customCategory: customCategory.trim(),
+                customWords: wordsArray,
+            });
+        }
+
         socket.emit("set_point_limit", { roomCode, pointLimit });
         socket.emit("start_game", roomCode);
     };
+
 
     return (
         <div className="lobby">
@@ -128,19 +150,45 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
 
                     {isHost && (
                         <>
-                            <label>Categories:</label>
-                            <select
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                            >
-                                <option value="random">🎲 Random</option>
-                                <option value="food">🍽️ Food</option>
-                                <option value="animal">🐾 Animal</option>
-                                <option value="object">📦 Object</option>
-                                <option value="movie">🎬 Movie</option>
-                                <option value="celebrity">🎨 Celebrity</option>
-                                <option value="country">🌍 Country</option>
-                            </select>
+                                <label>Mode:</label>
+                                <select value={mode} onChange={(e) => setMode(e.target.value)}>
+                                    <option value="default">🧠 Default Presets</option>
+                                    <option value="custom">✍️ Custom Category</option>
+                                </select>
+
+                                {mode === "default" ? (
+                                    <>
+                                        <label>Categories:</label>
+                                        <select
+                                            value={category}
+                                            onChange={(e) => setCategory(e.target.value)}
+                                        >
+                                            <option value="random">🎲 Random</option>
+                                            <option value="food">🍽️ Food</option>
+                                            <option value="animal">🐾 Animal</option>
+                                            <option value="object">📦 Object</option>
+                                            <option value="movie">🎬 Movie</option>
+                                            <option value="celebrity">🎨 Celebrity</option>
+                                            <option value="country">🌍 Country</option>
+                                        </select>
+                                    </>
+                                ) : (
+                                    <>
+                                        <label>Custom Category Name:</label>
+                                        <input
+                                            placeholder="e.g., Colors"
+                                            value={customCategory}
+                                            onChange={(e) => setCustomCategory(e.target.value)}
+                                        />
+                                        <label>Custom Words (comma-separated):</label>
+                                        <textarea
+                                            placeholder="e.g., Red, Blue, Green, Yellow"
+                                            value={customWords}
+                                            onChange={(e) => setCustomWords(e.target.value)}
+                                            rows={3}
+                                        />
+                                    </>
+                                )}
 
                             <label>Points to win:</label>
                             <select

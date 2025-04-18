@@ -189,7 +189,9 @@ io.on("connection", (socket) => {
             items: {},
             scores: {},
             correctGuessers: [],
-            turnIndex: 0
+            turnIndex: 0,
+            customCategory: null,
+            customWords: []
         };
 
         socket.join(roomCode);
@@ -230,6 +232,14 @@ io.on("connection", (socket) => {
       rooms[roomCode].category = category;
     }
   });
+    socket.on("set_custom_category", ({ roomCode, customCategory, customWords }) => {
+        const room = rooms[roomCode];
+        if (room) {
+            room.customCategory = customCategory;
+            room.customWords = customWords;
+        }
+    });
+
     socket.on("set_point_limit", ({ roomCode, pointLimit }) => {
         const room = rooms[roomCode];
         if (room) {
@@ -246,12 +256,21 @@ io.on("connection", (socket) => {
 
         const turnPlayerId = room.players[room.turnIndex].id;
         let chosenCategory = room.category;
-        if (room.category === "random") {
+        let selectedItems = [];
+
+        if (room.category === "custom" && room.customWords.length > 0) {
+            chosenCategory = room.customCategory || "Custom";
+            selectedItems = [...room.customWords];
+        } else if (room.category === "random") {
             const keys = Object.keys(categories);
             chosenCategory = keys[Math.floor(Math.random() * keys.length)];
+            selectedItems = [...categories[chosenCategory]];
+        } else {
+            selectedItems = [...categories[chosenCategory]];
         }
+
         room.chosenCategory = chosenCategory;
-        const selectedItems = [...categories[chosenCategory]];
+
 
         const players = room.players;
         const shuffledItems = players.map(() => getRandomItem(selectedItems));
@@ -367,6 +386,8 @@ io.on("connection", (socket) => {
         room.correctGuessers = [];
         room.guessedPlayers = [];
         room.turnIndex = 0;
+        room.customCategory = null;
+        room.customWords = [];
 
         io.to(roomCode).emit("return_to_lobby");
     });
