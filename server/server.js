@@ -114,18 +114,20 @@ function startNewRound(roomCode) {
 
     room.correctGuessers = [];
     room.guessedPlayers = [];
+
     let chosenCategory = room.category;
     if (room.category === "random") {
         const keys = Object.keys(categories);
         chosenCategory = keys[Math.floor(Math.random() * keys.length)];
     }
     room.chosenCategory = chosenCategory;
+
     const selectedItems = [...categories[chosenCategory]];
     const players = room.players;
     const shuffledItems = players.map(() => getRandomItem(selectedItems));
+
     let lowestScore = Infinity;
     let lowestIndex = 0;
-
     players.forEach((p, i) => {
         const score = room.scores[p.id] || 0;
         if (score < lowestScore) {
@@ -145,7 +147,6 @@ function startNewRound(roomCode) {
             score: room.scores[p.id] || 0
         }));
 
-
         room.items[player.id] = shuffledItems[index];
 
         io.to(player.id).emit("new_round", {
@@ -155,7 +156,9 @@ function startNewRound(roomCode) {
             chosenCategory: room.chosenCategory
         });
     });
+    io.to(roomCode).emit("turn_updated", { turnIndex: room.turnIndex });
 }
+
 function getNextEligibleTurn(room) {
     const total = room.players.length;
     for (let i = 1; i <= total; i++) {
@@ -354,7 +357,10 @@ io.on("connection", (socket) => {
         const roundOver = room.correctGuessers.length >= 2;
 
         if (roundOver) {
-            setTimeout(() => startNewRound(roomCode), 1000);
+            setTimeout(() => {
+                room.chosenCategory = null;
+                startNewRound(roomCode);
+            }, 1000);
         } else {
             room.turnIndex = getNextEligibleTurn(room);
 
