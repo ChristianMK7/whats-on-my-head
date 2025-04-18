@@ -103,13 +103,13 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                 alert("You need at least 2 words for the custom category.");
                 return;
             }
+            socket.emit("set_category", { roomCode, category: "custom" });
             socket.emit("set_custom_category", {
                 roomCode,
                 customCategory: customCategory.trim(),
                 customWords: wordsArray,
             });
         }
-
         socket.emit("set_point_limit", { roomCode, pointLimit });
         socket.emit("start_game", roomCode);
     };
