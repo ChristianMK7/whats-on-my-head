@@ -46,13 +46,11 @@ function App() {
             const playerId = localStorage.getItem("playerId");
 
             if (name && roomCode && playerId) {
-                socket.emit("reconnect_player", {
-                    name,
-                    roomCode,
-                    playerId,
-                });
+                socket.emit("reconnect_player", { name, roomCode, playerId });
+                socket.emit("get_players", { roomCode }); // 💥 Force emit after reconnect
             }
         };
+
 
         socket.on("return_to_lobby", handleReturnToLobby);
         socket.on("game_started", handleGameStarted);
