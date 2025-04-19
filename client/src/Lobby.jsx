@@ -12,6 +12,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
     const [customCategory, setCustomCategory] = useState("");
     const [customWords, setCustomWords] = useState("");
     const isHost = playerData?.playerId === playerData?.hostId;
+    const [showHowTo, setShowHowTo] = useState(false);
 
     useEffect(() => {
         const handleRestoreState = (data) => {
@@ -21,7 +22,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
 
         socket.on("restore_state", handleRestoreState);
         return () => socket.off("restore_state", handleRestoreState);
-    }, []);
+    }, [setPhase, setPlayerData]);
 
     useEffect(() => {
         if (playerData?.roomCode) {
@@ -46,7 +47,6 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                 name: name,
             });
             setPhase("game");
-
         });
 
         return () => {
@@ -94,7 +94,6 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
         });
     };
 
-
     const handleStart = () => {
         if (players.length < 2) {
             alert("You need at least 2 players to start the game.");
@@ -124,98 +123,119 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
         socket.emit("start_game", roomCode);
     };
 
-
     return (
-        <div className="lobby">
-            <h1>What's on My Head</h1>
+        <>
+            <div className="lobby">
+                <h1>
+                    What's on My Head
+                    <button className="help-btn" onClick={() => setShowHowTo(true)}>❓</button>
+                </h1>
 
-            {!roomCode && !isRejoining ? (
-                <>
-                    <input
-                        placeholder="Enter your name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <button type="button" onClick={handleCreate}>Create Room</button>
+                {!roomCode && !isRejoining ? (
+                    <>
+                        <input
+                            placeholder="Enter your name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <button type="button" onClick={handleCreate}>Create Room</button>
 
-                    <input
-                        placeholder="Enter room code"
-                        value={roomCodeInput}
-                        onChange={(e) => setRoomCodeInput(e.target.value)}
-                        maxLength={5}
-                    />
-                    <button type="button" onClick={handleJoin}>Join Room</button>
-                </>
-            ) : (
-                <>
-                    <p>Room Code: <strong>{roomCode}</strong></p>
-                    <h2>Players:</h2>
-                    <div className="player-list">
-                        {players.map((p) => (
-                            <div key={p.id} className=" player player-name">
-                                {p.name}
-                            </div>
-                        ))}
+                        <input
+                            placeholder="Enter room code"
+                            value={roomCodeInput}
+                            onChange={(e) => setRoomCodeInput(e.target.value)}
+                            maxLength={5}
+                        />
+                        <button type="button" onClick={handleJoin}>Join Room</button>
+                    </>
+                ) : (
+                    <>
+                        <p>Room Code: <strong>{roomCode}</strong></p>
+                        <h2>Players:</h2>
+                        <div className="player-list">
+                            {players.map((p) => (
+                                <div key={p.id} className="player player-name">
+                                    {p.name}
+                                </div>
+                            ))}
+                        </div>
+
+                        {isHost && (
+                            <>
+                                <label>Mode:</label>
+                                <select value={mode} onChange={(e) => setMode(e.target.value)}>
+                                    <option value="default">🧠 Default Presets</option>
+                                    <option value="custom">✍️ Custom Category</option>
+                                </select>
+
+                                {mode === "default" ? (
+                                    <>
+                                        <label>Categories:</label>
+                                        <select
+                                            value={category}
+                                            onChange={(e) => setCategory(e.target.value)}
+                                        >
+                                            <option value="random">🎲 Random</option>
+                                            <option value="food">🍽️ Food</option>
+                                            <option value="animal">🐾 Animal</option>
+                                            <option value="object">📦 Object</option>
+                                            <option value="movie">🎬 Movie</option>
+                                            <option value="celebrity">🎨 Celebrity</option>
+                                            <option value="country">🌍 Country</option>
+                                        </select>
+                                    </>
+                                ) : (
+                                    <>
+                                        <label>Custom Category Name:</label>
+                                        <input
+                                            placeholder="e.g., Colors"
+                                            value={customCategory}
+                                            onChange={(e) => setCustomCategory(e.target.value)}
+                                        />
+                                        <label>Custom Words (comma-separated):</label>
+                                        <textarea
+                                            placeholder="e.g., Red, Blue, Green, Yellow"
+                                            value={customWords}
+                                            onChange={(e) => setCustomWords(e.target.value)}
+                                            rows={3}
+                                        />
+                                    </>
+                                )}
+
+                                <label>Points to win:</label>
+                                <select
+                                    value={pointLimit}
+                                    onChange={(e) => setPointLimit(Number(e.target.value))}
+                                >
+                                    <option value={5}>5</option>
+                                    <option value={10}>10</option>
+                                    <option value={15}>15</option>
+                                </select>
+
+                                <button type="button" onClick={handleStart}>Start Game</button>
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
+
+            {showHowTo && (
+                <div className="modal-backdrop" onClick={() => setShowHowTo(false)}>
+                    <div className="modal" onClick={(e) => e.stopPropagation()}>
+                        <h2>How to Play</h2>
+                        <ul style={{ textAlign: "left" }}>
+                            <li>🎮 Create or join a room</li>
+                            <li>🙈 You can't see your own word, but everyone else can</li>
+                            <li>🔄 Take turns asking Yes/No questions</li>
+                            <li>🧠 You can guess your word once per turn</li>
+                            <li>🥇 First 2 correct guesses score points</li>
+                            <li>🏆 First to reach the point limit wins</li>
+                        </ul>
+                        <button onClick={() => setShowHowTo(false)}>Got it!</button>
                     </div>
-
-                    {isHost && (
-                        <>
-                            <label>Mode:</label>
-                            <select value={mode} onChange={(e) => setMode(e.target.value)}>
-                                <option value="default">🧠 Default Presets</option>
-                                <option value="custom">✍️ Custom Category</option>
-                            </select>
-
-                            {mode === "default" ? (
-                                <>
-                                    <label>Categories:</label>
-                                    <select
-                                        value={category}
-                                        onChange={(e) => setCategory(e.target.value)}
-                                    >
-                                        <option value="random">🎲 Random</option>
-                                        <option value="food">🍽️ Food</option>
-                                        <option value="animal">🐾 Animal</option>
-                                        <option value="object">📦 Object</option>
-                                        <option value="movie">🎬 Movie</option>
-                                        <option value="celebrity">🎨 Celebrity</option>
-                                        <option value="country">🌍 Country</option>
-                                    </select>
-                                </>
-                            ) : (
-                                <>
-                                    <label>Custom Category Name:</label>
-                                    <input
-                                        placeholder="e.g., Colors"
-                                        value={customCategory}
-                                        onChange={(e) => setCustomCategory(e.target.value)}
-                                    />
-                                    <label>Custom Words (comma-separated):</label>
-                                    <textarea
-                                        placeholder="e.g., Red, Blue, Green, Yellow"
-                                        value={customWords}
-                                        onChange={(e) => setCustomWords(e.target.value)}
-                                        rows={3}
-                                    />
-                                </>
-                            )}
-
-                            <label>Points to win:</label>
-                            <select
-                                value={pointLimit}
-                                onChange={(e) => setPointLimit(Number(e.target.value))}
-                            >
-                                <option value={5}>5</option>
-                                <option value={10}>10</option>
-                                <option value={15}>15</option>
-                            </select>
-
-                            <button type="button" onClick={handleStart}>Start Game</button>
-                        </>
-                    )}
-                </>
+                </div>
             )}
-        </div>
+        </>
     );
 }
 

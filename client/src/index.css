@@ -24,27 +24,38 @@ body, html {
     box-shadow: 0 0 10px #0f0;
 }
 
-input, select, button {
+input, select, button, textarea {
     display: block;
-    margin: 10px auto;
-    padding: 14px; 
+    margin: 12px auto;
+    padding: 14px;
     border-radius: 10px;
     border: none;
-    font-size: 18px;
+    font-size: 16px;
     width: 100%;
     max-width: 300px;
     box-sizing: border-box;
+    background: #111;
+    color: white;
 }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #999;
+    }
 
 button {
     background: #1a5d2b;
     color: white;
     cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s, transform 0.2s;
 }
 
     button:hover {
         background: #23a23e;
+        transform: scale(1.03);
     }
+
 .player-list {
     display: flex;
     flex-direction: column;
@@ -61,12 +72,14 @@ button {
     margin: 5px 0;
     font-size: 18px;
 }
+
 .player-name {
     opacity: 0;
     transform: translateY(-10px);
     animation: fadeInUp 0.4s forwards;
-    animation-delay: 0.2s
+    animation-delay: 0.2s;
 }
+
 @keyframes fadeInUp {
     to {
         opacity: 1;
@@ -74,21 +87,13 @@ button {
     }
 }
 
-.game {
-    text-align: center;
-    max-width: 400px;
-    margin: auto;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 0 20px #0f0;
-}
 .leaderboard {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
 }
+
 .category-reveal {
     opacity: 0;
     animation: fadeIn 0.5s forwards;
@@ -103,7 +108,6 @@ button {
         opacity: 1;
     }
 }
-
 
 .leaderboard-entry {
     display: flex;
@@ -132,6 +136,7 @@ button {
     margin: 4px 0;
     color: #ddd;
 }
+
 @media (max-width: 600px) {
     .lobby, .game {
         padding: 20px;
@@ -146,11 +151,12 @@ button {
         width: 90%;
     }
 }
+
 @media (max-width: 480px) {
-    input, select, button {
+    input, select, button, textarea {
         width: 90%;
         font-size: 14px;
-        padding: 8px;
+        padding: 10px;
     }
 
     .lobby, .game {
@@ -159,4 +165,53 @@ button {
         margin: 20px auto;
     }
 }
+.help-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    margin-left: 10px;
+    color: #fff;
+    cursor: pointer;
+}
 
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #111;
+    padding: 20px 30px;
+    border-radius: 12px;
+    max-width: 90%;
+    text-align: left;
+    box-shadow: 0 0 15px #0f0;
+    color: white;
+}
+
+    .modal h2 {
+        margin-top: 0;
+    }
+
+    .modal ul {
+        padding-left: 20px;
+        list-style: disc;
+    }
+
+    .modal button {
+        margin-top: 15px;
+        background: #1a5d2b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+    }
