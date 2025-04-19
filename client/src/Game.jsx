@@ -1,11 +1,11 @@
 ﻿import React, { useState, useEffect } from "react";
 import socket from "./socket";
 const playSound = (filename) => {
-  const audio = new Audio(`/sounds/${filename}`);
-  audio.play();
+    const audio = new Audio(`/sounds/${filename}`);
+    audio.play();
 };
 
-function Game({ playerData, setInGame, setGameOverData, setPhase}) {
+function Game({ playerData, setInGame, setGameOverData, setPhase }) {
     const [players, setPlayers] = useState(playerData.players || []);
     const [guess, setGuess] = useState("");
     const [feedback, setFeedback] = useState("");
@@ -24,7 +24,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
             setTurnIndex(turnIndex);
             setCategoryUsed(chosenCategory || null);
             setGameOverData(null);
-            setInGame(true);  
+            setInGame(true);
             console.log("✅ Category used this round:", chosenCategory);
 
         };
@@ -53,13 +53,13 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
         };
         socket.on("turn_updated", ({ turnIndex }) => {
             setTurnIndex(turnIndex);
-            setHasGuessed(false);
 
             const currentTurnPlayer = players[turnIndex];
             const isNowMyTurn = currentTurnPlayer?.id === yourPlayerId;
 
             if (isNowMyTurn) {
                 playSound("turn.mp3");
+                setHasGuessed(false);
                 setFeedback("");
             }
         });
@@ -82,7 +82,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
             socket.off("game_over");
         };
 
-    },[players, setGameOverData, setInGame, setPhase, yourPlayerId]);
+    }, [players, setGameOverData, setInGame, setPhase, yourPlayerId]);
 
     const handleGuess = () => {
         if (!guess.trim() || hasGuessed) return;

@@ -21,7 +21,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
 
         socket.on("restore_state", handleRestoreState);
         return () => socket.off("restore_state", handleRestoreState);
-    }, [setPhase, setPlayerData]);
+    }, []);
 
     useEffect(() => {
         if (playerData?.roomCode) {
@@ -67,7 +67,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                 name,
                 roomCode,
                 playerId,
-                hostId 
+                hostId
             });
             localStorage.setItem("name", name);
             localStorage.setItem("roomCode", roomCode);
@@ -91,7 +91,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                     name,
                     roomCode: roomCodeInput,
                     playerId: res.playerId,
-                    hostId: res.hostId 
+                    hostId: res.hostId
                 });
                 localStorage.setItem("name", name);
                 localStorage.setItem("roomCode", roomCodeInput);
@@ -166,45 +166,45 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
 
                     {isHost && (
                         <>
-                                <label>Mode:</label>
-                                <select value={mode} onChange={(e) => setMode(e.target.value)}>
-                                    <option value="default">🧠 Default Presets</option>
-                                    <option value="custom">✍️ Custom Category</option>
-                                </select>
+                            <label>Mode:</label>
+                            <select value={mode} onChange={(e) => setMode(e.target.value)}>
+                                <option value="default">🧠 Default Presets</option>
+                                <option value="custom">✍️ Custom Category</option>
+                            </select>
 
-                                {mode === "default" ? (
-                                    <>
-                                        <label>Categories:</label>
-                                        <select
-                                            value={category}
-                                            onChange={(e) => setCategory(e.target.value)}
-                                        >
-                                            <option value="random">🎲 Random</option>
-                                            <option value="food">🍽️ Food</option>
-                                            <option value="animal">🐾 Animal</option>
-                                            <option value="object">📦 Object</option>
-                                            <option value="movie">🎬 Movie</option>
-                                            <option value="celebrity">🎨 Celebrity</option>
-                                            <option value="country">🌍 Country</option>
-                                        </select>
-                                    </>
-                                ) : (
-                                    <>
-                                        <label>Custom Category Name:</label>
-                                        <input
-                                            placeholder="e.g., Colors"
-                                            value={customCategory}
-                                            onChange={(e) => setCustomCategory(e.target.value)}
-                                        />
-                                        <label>Custom Words (comma-separated):</label>
-                                        <textarea
-                                            placeholder="e.g., Red, Blue, Green, Yellow"
-                                            value={customWords}
-                                            onChange={(e) => setCustomWords(e.target.value)}
-                                            rows={3}
-                                        />
-                                    </>
-                                )}
+                            {mode === "default" ? (
+                                <>
+                                    <label>Categories:</label>
+                                    <select
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                    >
+                                        <option value="random">🎲 Random</option>
+                                        <option value="food">🍽️ Food</option>
+                                        <option value="animal">🐾 Animal</option>
+                                        <option value="object">📦 Object</option>
+                                        <option value="movie">🎬 Movie</option>
+                                        <option value="celebrity">🎨 Celebrity</option>
+                                        <option value="country">🌍 Country</option>
+                                    </select>
+                                </>
+                            ) : (
+                                <>
+                                    <label>Custom Category Name:</label>
+                                    <input
+                                        placeholder="e.g., Colors"
+                                        value={customCategory}
+                                        onChange={(e) => setCustomCategory(e.target.value)}
+                                    />
+                                    <label>Custom Words (comma-separated):</label>
+                                    <textarea
+                                        placeholder="e.g., Red, Blue, Green, Yellow"
+                                        value={customWords}
+                                        onChange={(e) => setCustomWords(e.target.value)}
+                                        rows={3}
+                                    />
+                                </>
+                            )}
 
                             <label>Points to win:</label>
                             <select

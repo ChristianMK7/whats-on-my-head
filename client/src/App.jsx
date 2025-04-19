@@ -22,7 +22,7 @@ function App() {
 
     useEffect(() => {
         const handleReturnToLobby = () => {
-            setGameOverData(null); 
+            setGameOverData(null);
             setPhase("lobby");
             socket.emit("get_players", { roomCode: playerData.roomCode });
         };
@@ -46,11 +46,13 @@ function App() {
             const playerId = localStorage.getItem("playerId");
 
             if (name && roomCode && playerId) {
-                socket.emit("reconnect_player", { name, roomCode, playerId });
-                socket.emit("get_players", { roomCode }); // 💥 Force emit after reconnect
+                socket.emit("reconnect_player", {
+                    name,
+                    roomCode,
+                    playerId,
+                });
             }
         };
-
 
         socket.on("return_to_lobby", handleReturnToLobby);
         socket.on("game_started", handleGameStarted);

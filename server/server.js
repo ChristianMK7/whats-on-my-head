@@ -9,10 +9,10 @@ app.use(cors());
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
 });
 
 const categories = {
@@ -22,7 +22,7 @@ const categories = {
         "Bagel", "Cupcake", "Lollipop", "Muffin", "Cereal", "Nachos", "Meatballs", "Spring Rolls",
         "Dumplings", "Quiche", "Lasagna", "Mac & Cheese", "Fajitas", "Samosa", "Tofu", "Falafel", "Pita", "Hummus",
         "Cornbread", "Tuna", "Grilled Cheese", "Lentil Soup", "Shrimp", "Cake", "Chili", "Risotto",
-        "Curry", "Biryani", "Kebab", "Tortilla", "Gnocchi", "Tabouleh", 
+        "Curry", "Biryani", "Kebab", "Tortilla", "Gnocchi", "Tabouleh",
         "Bruschetta", "Teriyaki", "Crepe",
         "Bisque", "Jambalaya", "Chicken Tenders", "French Fries", "Onion Rings", "Garlic Bread", "Pudding", "Yogurt",
         "Smoothie", "Milkshake", "Chocolate", "Candy", "Cheesecake", "Apple Pie", "Brownie", "Trifle", "Souffle", "Tiramisu",
@@ -106,31 +106,28 @@ const categories = {
 const rooms = {};
 
 function getRandomItem(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+    return arr[Math.floor(Math.random() * arr.length)];
 }
 function startNewRound(roomCode) {
     const room = rooms[roomCode];
     if (!room) return;
 
+    room.roundTimeout = setTimeout(() => {
+        console.log("⏰ Round timeout. Forcing new round.");
+        startNewRound(roomCode);
+    }, 60000);
+
     room.correctGuessers = [];
     room.guessedPlayers = [];
 
     let chosenCategory = room.category;
-    let selectedItems = [];
-
-    if (room.category === "custom" && room.customWords.length > 0) {
-        chosenCategory = room.customCategory || "Custom";
-        selectedItems = [...room.customWords];
-    } else if (room.category === "random") {
+    if (room.category === "random") {
         const keys = Object.keys(categories);
         chosenCategory = keys[Math.floor(Math.random() * keys.length)];
-        selectedItems = [...categories[chosenCategory]];
-    } else {
-        selectedItems = [...categories[chosenCategory]];
     }
-
     room.chosenCategory = chosenCategory;
 
+    const selectedItems = [...categories[chosenCategory]];
     const players = room.players;
     const shuffledItems = players.map(() => getRandomItem(selectedItems));
 
@@ -238,11 +235,11 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("update_players", rooms[roomCode].players);
     });
 
-  socket.on("set_category", ({ roomCode, category }) => {
-    if (rooms[roomCode]) {
-      rooms[roomCode].category = category;
-    }
-  });
+    socket.on("set_category", ({ roomCode, category }) => {
+        if (rooms[roomCode]) {
+            rooms[roomCode].category = category;
+        }
+    });
     socket.on("set_custom_category", ({ roomCode, customCategory, customWords }) => {
         const room = rooms[roomCode];
         if (room) {
@@ -467,5 +464,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(3001, () => {
-  console.log("✅ Server is running on port 3001");
+    console.log("✅ Server is running on port 3001");
 });
