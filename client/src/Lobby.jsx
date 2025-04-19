@@ -128,7 +128,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
             <div className="lobby">
                 <h1>
                     What's on My Head
-                    <button className="help-btn" onClick={() => setShowHowTo(true)}>❓</button>
+                    <button className="help-btn" onClick={() => setShowHowTo(true)}>How To Play❓</button>
                 </h1>
 
                 {!roomCode && !isRejoining ? (
