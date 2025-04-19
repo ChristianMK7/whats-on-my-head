@@ -53,13 +53,13 @@ function Game({ playerData, setInGame, setGameOverData, setPhase}) {
         };
         socket.on("turn_updated", ({ turnIndex }) => {
             setTurnIndex(turnIndex);
+            setHasGuessed(false);
 
             const currentTurnPlayer = players[turnIndex];
             const isNowMyTurn = currentTurnPlayer?.id === yourPlayerId;
 
             if (isNowMyTurn) {
                 playSound("turn.mp3");
-                setHasGuessed(false);
                 setFeedback("");
             }
         });

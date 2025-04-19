@@ -21,7 +21,7 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
 
         socket.on("restore_state", handleRestoreState);
         return () => socket.off("restore_state", handleRestoreState);
-    }, []);
+    }, [setPhase, setPlayerData]);
 
     useEffect(() => {
         if (playerData?.roomCode) {
