@@ -69,9 +69,6 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                 playerId,
                 hostId
             });
-            localStorage.setItem("name", name);
-            localStorage.setItem("roomCode", roomCode);
-            localStorage.setItem("playerId", playerId);
         });
     };
 
@@ -93,9 +90,6 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                     playerId: res.playerId,
                     hostId: res.hostId
                 });
-                localStorage.setItem("name", name);
-                localStorage.setItem("roomCode", roomCodeInput);
-                localStorage.setItem("playerId", res.playerId); // <-- this line
             }
         });
     };

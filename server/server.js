@@ -444,6 +444,7 @@ io.on("connection", (socket) => {
 
                 io.to(code).emit("update_players", room.players);
 
+                // INCREASE THIS TO 2 MINUTES (120000ms)
                 setTimeout(() => {
                     const stillDisconnected = room.players.find(p => p.id === socket.id && p.disconnected);
                     if (stillDisconnected) {
@@ -456,11 +457,10 @@ io.on("connection", (socket) => {
                             io.to(code).emit("update_players", room.players);
                         }
                     }
-                }, 30000);
+                }, 120000);
             }
         }
     });
-
 });
 
 server.listen(3001, () => {
