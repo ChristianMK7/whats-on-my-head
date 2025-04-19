@@ -121,13 +121,21 @@ function startNewRound(roomCode) {
     room.guessedPlayers = [];
 
     let chosenCategory = room.category;
-    if (room.category === "random") {
+    let selectedItems = [];
+
+    if (room.category === "custom" && room.customWords.length > 0) {
+        chosenCategory = room.customCategory || "Custom";
+        selectedItems = [...room.customWords];
+    } else if (room.category === "random") {
         const keys = Object.keys(categories);
         chosenCategory = keys[Math.floor(Math.random() * keys.length)];
+        selectedItems = [...categories[chosenCategory]];
+    } else {
+        selectedItems = [...categories[chosenCategory]];
     }
+
     room.chosenCategory = chosenCategory;
 
-    const selectedItems = [...categories[chosenCategory]];
     const players = room.players;
     const shuffledItems = players.map(() => getRandomItem(selectedItems));
 
@@ -161,8 +169,10 @@ function startNewRound(roomCode) {
             chosenCategory: room.chosenCategory
         });
     });
+
     io.to(roomCode).emit("turn_updated", { turnIndex: room.turnIndex });
 }
+
 
 function getNextEligibleTurn(room) {
     const total = room.players.length;
@@ -444,7 +454,6 @@ io.on("connection", (socket) => {
 
                 io.to(code).emit("update_players", room.players);
 
-                // INCREASE THIS TO 2 MINUTES (120000ms)
                 setTimeout(() => {
                     const stillDisconnected = room.players.find(p => p.id === socket.id && p.disconnected);
                     if (stillDisconnected) {
