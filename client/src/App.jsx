@@ -8,6 +8,17 @@ function App() {
     const [playerData, setPlayerData] = useState({});
     const [gameOverData, setGameOverData] = useState(null);
     const [phase, setPhase] = useState("menu");
+    useEffect(() => {
+        const name = localStorage.getItem("name");
+        const roomCode = localStorage.getItem("roomCode");
+        const playerId = localStorage.getItem("playerId");
+
+        if (name && roomCode && playerId) {
+            setPlayerData({ name, roomCode, playerId });
+            setPhase("lobby");
+        }
+    }, []);
+
 
     useEffect(() => {
         const handleReturnToLobby = () => {
@@ -29,15 +40,30 @@ function App() {
             setGameOverData(null);
             setPhase("game");
         };
+        const handleReconnect = () => {
+            const name = localStorage.getItem("name");
+            const roomCode = localStorage.getItem("roomCode");
+            const playerId = localStorage.getItem("playerId");
+
+            if (name && roomCode && playerId) {
+                socket.emit("reconnect_player", {
+                    name,
+                    roomCode,
+                    playerId,
+                });
+            }
+        };
 
         socket.on("return_to_lobby", handleReturnToLobby);
         socket.on("game_started", handleGameStarted);
+        socket.on("connect", handleReconnect);
 
         return () => {
             socket.off("return_to_lobby", handleReturnToLobby);
             socket.off("game_started", handleGameStarted);
+            socket.off("connect", handleReconnect);
         };
-    }, [playerData.roomCode]);
+    }, [playerData.name, playerData.playerId, playerData.roomCode]);
 
     return (
         <div className="app">

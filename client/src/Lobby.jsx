@@ -14,6 +14,16 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
     const isHost = playerData?.playerId === playerData?.hostId;
 
     useEffect(() => {
+        const handleRestoreState = (data) => {
+            setPlayerData(data);
+            setPhase("game");
+        };
+
+        socket.on("restore_state", handleRestoreState);
+        return () => socket.off("restore_state", handleRestoreState);
+    }, []);
+
+    useEffect(() => {
         if (playerData?.roomCode) {
             socket.emit("get_players", { roomCode: playerData.roomCode });
         }
@@ -59,6 +69,9 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                 playerId,
                 hostId 
             });
+            localStorage.setItem("name", name);
+            localStorage.setItem("roomCode", roomCode);
+            localStorage.setItem("playerId", playerId);
         });
     };
 
@@ -80,6 +93,9 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                     playerId: res.playerId,
                     hostId: res.hostId 
                 });
+                localStorage.setItem("name", name);
+                localStorage.setItem("roomCode", roomCodeInput);
+                localStorage.setItem("playerId", res.playerId); // <-- this line
             }
         });
     };

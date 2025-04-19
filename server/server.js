@@ -112,6 +112,11 @@ function startNewRound(roomCode) {
     const room = rooms[roomCode];
     if (!room) return;
 
+    room.roundTimeout = setTimeout(() => {
+        console.log("⏰ Round timeout. Forcing new round.");
+        startNewRound(roomCode);
+    }, 60000);
+
     room.correctGuessers = [];
     room.guessedPlayers = [];
 
@@ -398,17 +403,64 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("return_to_lobby");
     });
 
-  socket.on("disconnect", () => {
-    for (const code in rooms) {
-      const room = rooms[code];
-      room.players = room.players.filter(p => p.id !== socket.id);
-      if (room.players.length === 0) {
-        delete rooms[code];
-      } else {
-        io.to(code).emit("update_players", room.players);
-      }
-    }
-  });
+    socket.on("reconnect_player", ({ roomCode, playerId, name }) => {
+        const room = rooms[roomCode];
+        if (!room) return;
+
+        const playerIndex = room.players.findIndex(p => p.id === playerId);
+        if (playerIndex !== -1) {
+            room.players[playerIndex].id = socket.id;
+        } else {
+            room.players.push({ id: socket.id, name });
+        }
+
+        io.to(roomCode).emit("update_players", room.players);
+
+        const fullState = {
+            players: room.players.map((p, i) => ({
+                name: p.name,
+                id: p.id,
+                item: i === playerIndex ? "???" : room.items[p.id],
+                actualItem: room.items[p.id],
+                score: room.scores[p.id] || 0
+            })),
+            turnIndex: room.turnIndex,
+            playerId: socket.id,
+            hostId: room.host,
+            roomCode,
+            chosenCategory: room.chosenCategory
+        };
+
+        io.to(socket.id).emit("restore_state", fullState);
+    });
+
+
+    socket.on("disconnect", () => {
+        for (const code in rooms) {
+            const room = rooms[code];
+            const player = room.players.find(p => p.id === socket.id);
+            if (player) {
+                player.disconnected = true;
+
+                io.to(code).emit("update_players", room.players);
+
+                setTimeout(() => {
+                    const stillDisconnected = room.players.find(p => p.id === socket.id && p.disconnected);
+                    if (stillDisconnected) {
+                        room.players = room.players.filter(p => p.id !== socket.id);
+                        delete room.items[socket.id];
+
+                        if (room.players.length === 0) {
+                            delete rooms[code];
+                        } else {
+                            io.to(code).emit("update_players", room.players);
+                        }
+                    }
+                }, 30000);
+            }
+        }
+    });
+
 });
 
 server.listen(3001, () => {
