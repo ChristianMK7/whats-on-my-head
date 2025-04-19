@@ -112,11 +112,6 @@ function startNewRound(roomCode) {
     const room = rooms[roomCode];
     if (!room) return;
 
-    room.roundTimeout = setTimeout(() => {
-        console.log("⏰ Round timeout. Forcing new round.");
-        startNewRound(roomCode);
-    }, 60000);
-
     room.correctGuessers = [];
     room.guessedPlayers = [];
 
