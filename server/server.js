@@ -483,6 +483,9 @@ io.on("connection", (socket) => {
         }
     });
 });
+setInterval(() => {
+    console.log("⏳ Keep-alive ping");
+}, 5 * 60 * 1000); // Every 5 minutes
 
 server.listen(3001, () => {
     console.log("✅ Server is running on port 3001");
