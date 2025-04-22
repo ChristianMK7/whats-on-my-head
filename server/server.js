@@ -98,6 +98,18 @@ const categories = {
         "Kazakhstan", "Uzbekistan", "Turkmenistan", "Afghanistan", "Georgia", "Armenia", "Azerbaijan", "Belarus", "Lithuania", "Latvia",
         "Estonia", "Iceland", "Luxembourg", "Liechtenstein", "Monaco", "Andorra", "Malta", "Cyprus", "Bahamas", "Jamaica",
         "Cuba", "Dominican Republic", "Panama", "Costa Rica", "Guatemala", "Honduras", "Paraguay", "Uruguay"
+    ],
+    brawlstars: [
+        "8-Bit", "Amber", "Angelo", "Ash", "Barley", "Bea", "Belle", "Berry", "Bibi", "Bo",
+        "Bonnie", "Brock", "Bull", "Buster", "Buzz", "Byron", "Carl", "Charlie", "Chester",
+        "Chuck", "Clancy", "Colette", "Colt", "Cordelius", "Darryl", "Doug", "Draco",
+        "Dynamike", "Edgar", "El Primo", "Emz", "Eve", "Fang", "Finx", "Frank", "Gale",
+        "Gene", "Gray", "Griff", "Grom", "Gus", "Hank", "Jacky", "Janet", "Jessie", "Juju",
+        "Kenji", "Kit", "Larry & Lawrie", "Leon", "Lily", "Lola", "Lumi", "Lou", "Maisie",
+        "Mandy", "Max", "Meeple", "Meg", "Melodie", "Mico", "Moe", "Mortis", "Mr. P", "Nani",
+        "Nita", "Ollie", "Otis", "Pam", "Pearl", "Penny", "Piper", "Poco", "R-T", "Rico",
+        "Rosa", "Ruffs", "Sam", "Sandy", "Shade", "Shelly", "Spike", "Sprout", "Squeak",
+        "Stu", "Surge", "Tara", "Tick", "Willow"
     ]
 };
 

@@ -182,6 +182,8 @@ function Lobby({ setPhase, setPlayerData, isRejoining = false, playerData }) {
                                             <option value="movie">🎬 Movie</option>
                                             <option value="celebrity">🎨 Celebrity</option>
                                             <option value="country">🌍 Country</option>
+                                            <option value="brawlstars">🔥 Brawl Stars</option>
+
                                         </select>
                                     </>
                                 ) : (
