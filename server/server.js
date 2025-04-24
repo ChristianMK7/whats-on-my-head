@@ -362,14 +362,17 @@ io.on("connection", (socket) => {
                 correct: true,
                 points: room.scores[playerId]
             });
-            io.to(roomCode).emit("update_leaderboard", {
-                players: room.players.map(p => ({
+            room.players.forEach((player) => {
+                const visiblePlayers = room.players.map((p) => ({
                     name: p.name,
                     id: p.id,
                     score: room.scores[p.id] || 0,
-                    item: room.items[p.id]
-                }))
+                    item: p.id === player.id ? "???" : room.items[p.id]
+                }));
+
+                io.to(player.id).emit("update_leaderboard", { players: visiblePlayers });
             });
+
             if (room.scores[playerId] >= room.pointLimit) {
                 io.to(roomCode).emit("game_over", {
                     winner: room.players.find(p => p.id === playerId).name,
