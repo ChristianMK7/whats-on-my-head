@@ -124,18 +124,7 @@ function startNewRound(roomCode) {
     const room = rooms[roomCode];
     if (!room) return;
 
-    if (room.roundTimeout) clearTimeout(room.roundTimeout);
-    room.roundTimeout = setTimeout(() => {
-        console.log("⏰ Turn timed out. Passing to next player.");
-        const total = room.players.length;
-        room.turnIndex = getNextEligibleTurn(room);
-
-        room.players.forEach((player) => {
-            io.to(player.id).emit("turn_updated", {
-                turnIndex: room.turnIndex
-            });
-        });
-    }, 60000);
+    resetTurnTimeout(roomCode);
 
     room.correctGuessers = [];
     room.guessedPlayers = [];
@@ -204,6 +193,23 @@ function getNextEligibleTurn(room) {
         }
     }
     return room.turnIndex;
+}
+
+function resetTurnTimeout(roomCode) {
+    const room = rooms[roomCode];
+    if (!room) return;
+
+    if (room.roundTimeout) clearTimeout(room.roundTimeout);
+    room.roundTimeout = setTimeout(() => {
+        console.log("⏰ Turn timed out. Passing to next player.");
+        room.turnIndex = getNextEligibleTurn(room);
+        room.players.forEach((player) => {
+            io.to(player.id).emit("turn_updated", {
+                turnIndex: room.turnIndex
+            });
+        });
+        resetTurnTimeout(roomCode);
+    }, 60000);
 }
 
 io.on("connection", (socket) => {
@@ -420,15 +426,15 @@ io.on("connection", (socket) => {
         const room = rooms[roomCode];
         if (!room) return;
 
-        const total = room.players.length;
         room.turnIndex = getNextEligibleTurn(room);
-
-        room.players.forEach((player, index) => {
+        room.players.forEach((player) => {
             io.to(player.id).emit("turn_updated", {
-                turnIndex: room.turnIndex,
+                turnIndex: room.turnIndex
             });
         });
+        resetTurnTimeout(roomCode);
     });
+
     socket.on("play_again", ({ roomCode }) => {
         const room = rooms[roomCode];
         if (!room || socket.id !== room.host) return;

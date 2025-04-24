@@ -113,13 +113,15 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
             setTimer((prev) => {
                 if (prev <= 1) {
                     clearInterval(interval);
+                    socket.emit("pass_turn", { roomCode: playerData.roomCode });
                     return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
         return () => clearInterval(interval);
-    }, [isMyTurn]);
+    }, [isMyTurn, playerData.roomCode]);
+
     return (
         <div className="game">
             <h1>Guess What's on Your Head!</h1>
