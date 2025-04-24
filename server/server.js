@@ -126,8 +126,15 @@ function startNewRound(roomCode) {
 
     if (room.roundTimeout) clearTimeout(room.roundTimeout);
     room.roundTimeout = setTimeout(() => {
-        console.log("⏰ Round timeout. Forcing new round.");
-        startNewRound(roomCode);
+        console.log("⏰ Turn timed out. Passing to next player.");
+        const total = room.players.length;
+        room.turnIndex = getNextEligibleTurn(room);
+
+        room.players.forEach((player) => {
+            io.to(player.id).emit("turn_updated", {
+                turnIndex: room.turnIndex
+            });
+        });
     }, 60000);
 
     room.correctGuessers = [];

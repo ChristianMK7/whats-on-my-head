@@ -12,6 +12,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
     const [hasGuessed, setHasGuessed] = useState(false);
     const [turnIndex, setTurnIndex] = useState(playerData.turnIndex || 0);
     const [categoryUsed, setCategoryUsed] = useState(null);
+    const [timer, setTimer] = useState(60);
 
     const yourPlayerId = playerData.playerId;
 
@@ -22,7 +23,9 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
             setGuess("");
             setHasGuessed(false);
             setTurnIndex(turnIndex);
-            setCategoryUsed(chosenCategory || null);
+            if (chosenCategory) {
+                setCategoryUsed(chosenCategory);
+            }
             setGameOverData(null);
             setInGame(true);
             console.log("✅ Category used this round:", chosenCategory);
@@ -103,6 +106,20 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
     const currentTurnPlayer = players[turnIndex] || {};
     const isMyTurn = currentTurnPlayer.id === playerData.playerId;
 
+    useEffect(() => {
+        if (!isMyTurn) return;
+        setTimer(60);
+        const interval = setInterval(() => {
+            setTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [isMyTurn]);
     return (
         <div className="game">
             <h1>Guess What's on Your Head!</h1>
@@ -170,6 +187,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
                     <button type="button" onClick={handlePassTurn}>Pass Turn</button>
                 </>
             )}
+            {isMyTurn && <p>⏳ You have {timer}s to make your move!</p>}
 
             {feedback && <p>{feedback}</p>}
         </div>
