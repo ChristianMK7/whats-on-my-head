@@ -124,6 +124,7 @@ function startNewRound(roomCode) {
     const room = rooms[roomCode];
     if (!room) return;
 
+    if (room.roundTimeout) clearTimeout(room.roundTimeout);
     room.roundTimeout = setTimeout(() => {
         console.log("⏰ Round timeout. Forcing new round.");
         startNewRound(roomCode);
@@ -361,7 +362,14 @@ io.on("connection", (socket) => {
                 correct: true,
                 points: room.scores[playerId]
             });
-
+            io.to(roomCode).emit("update_leaderboard", {
+                players: room.players.map(p => ({
+                    name: p.name,
+                    id: p.id,
+                    score: room.scores[p.id] || 0,
+                    item: room.items[p.id]
+                }))
+            });
             if (room.scores[playerId] >= room.pointLimit) {
                 io.to(roomCode).emit("game_over", {
                     winner: room.players.find(p => p.id === playerId).name,
@@ -456,7 +464,6 @@ io.on("connection", (socket) => {
         io.to(socket.id).emit("restore_state", fullState);
     });
 
-
     socket.on("disconnect", () => {
         for (const code in rooms) {
             const room = rooms[code];
@@ -483,6 +490,7 @@ io.on("connection", (socket) => {
         }
     });
 });
+
 setInterval(() => {
     console.log("⏳ Keep-alive ping");
 }, 5 * 60 * 1000); // Every 5 minutes

@@ -69,7 +69,9 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
             setPhase("gameover");
         });
 
-
+        socket.on("update_leaderboard", ({ players }) => {
+            setPlayers(players);
+        });
 
         socket.on("game_started", handleGameStarted);
         socket.on("new_round", handleNewRound);
@@ -80,6 +82,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
             socket.off("guess_result", handleGuessResult);
             socket.off("turn_updated");
             socket.off("game_over");
+            socket.off("update_leaderboard");
         };
 
     }, [players, setGameOverData, setInGame, setPhase, yourPlayerId]);
