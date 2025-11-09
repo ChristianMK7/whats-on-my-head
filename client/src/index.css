@@ -1,106 +1,228 @@
-body, html {
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
     height: 100%;
-    background: linear-gradient(to bottom right, #013220, #000000);
-    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, -system-ui, sans-serif;
+    background: radial-gradient(circle at top, #024f2c 0%, #000000 55%);
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .app {
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
+    padding: 12px;
 }
 
-.lobby, .game {
-    text-align: center;
-    max-width: 400px;
-    margin: auto;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 0 10px #0f0;
-}
-
-input, select, button, textarea {
-    display: block;
-    margin: 12px auto;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
+/* Main card for lobby & game */
+.lobby,
+.game {
     width: 100%;
-    max-width: 300px;
+    max-width: 420px;
+    margin: auto;
+    padding: 18px 16px 20px;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+    text-align: center;
+}
+
+    /* Titles */
+    .lobby h1,
+    .game h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+
+    .lobby h2,
+    .game h2 {
+        font-size: 1.1rem;
+        margin: 8px 0;
+    }
+
+    .lobby p,
+    .game p {
+        margin: 4px 0;
+        font-size: 0.9rem;
+    }
+
+/* Inputs & buttons */
+input,
+select,
+button,
+textarea {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    margin: 8px auto;
+    padding: 11px 14px;
+    border-radius: 11px;
+    border: 1px solid rgba(0, 255, 120, 0.16);
+    background: #050505;
+    color: #ffffff;
+    font-size: 0.95rem;
     box-sizing: border-box;
-    background: #111;
-    color: white;
+    outline: none;
 }
 
     input::placeholder,
     textarea::placeholder {
-        color: #999;
+        color: #888;
     }
 
 button {
-    background: #1a5d2b;
-    color: white;
+    border: none;
+    background: linear-gradient(90deg, #1a5d2b, #20a943);
+    color: #ffffff;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s, transform 0.2s;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
+    border-radius: 999px;
 }
 
     button:hover {
-        background: #23a23e;
-        transform: scale(1.03);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
     }
 
+    button:active {
+        transform: translateY(1px) scale(0.97);
+        box-shadow: none;
+    }
+
+/* Help button in title */
+.help-btn {
+    margin-left: 6px;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    border-radius: 999px;
+    background: rgba(0, 255, 140, 0.18);
+    border: 1px solid rgba(0, 255, 140, 0.4);
+    color: #ffffff;
+}
+
+/* Player list & leaderboard */
 .player-list {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
+    margin: 6px 0 10px;
+    gap: 4px;
 }
 
 .player {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin: 5px 0;
-    font-size: 18px;
+    font-size: 0.95rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .player-name {
     opacity: 0;
-    transform: translateY(-10px);
-    animation: fadeInUp 0.4s forwards;
-    animation-delay: 0.2s;
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    transform: translateY(-6px);
+    animation: fadeInUp 0.3s forwards;
 }
 
 .leaderboard {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 6px;
+    gap: 4px;
 }
 
-.category-reveal {
+.leaderboard-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 260px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 0.9rem;
     opacity: 0;
-    animation: fadeIn 0.5s forwards;
-    font-style: italic;
-    color: #aaa;
-    margin-top: -10px;
-    margin-bottom: 10px;
+    transform: translateY(6px);
+    animation: fadeInUp 0.26s forwards;
+}
+
+/* Category + word reveal */
+.category-reveal {
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    margin: 2px 0 8px;
+    opacity: 0;
+    animation: fadeIn 0.35s forwards;
+}
+
+.player-reveal {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 8px 0 4px;
+}
+
+.player-reveal-entry {
+    font-size: 0.85rem;
+    color: #d8d8d8;
+}
+
+/* Modal */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #050505;
+    padding: 18px 18px 14px;
+    border-radius: 14px;
+    max-width: 92%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    color: #ffffff;
+    border: 1px solid rgba(0, 255, 120, 0.3);
+    font-size: 0.9rem;
+}
+
+    .modal h2 {
+        margin-top: 0;
+        font-size: 1.1rem;
+    }
+
+    .modal ul {
+        padding-left: 18px;
+        margin: 6px 0 0;
+    }
+
+    .modal button {
+        margin-top: 10px;
+    }
+
+/* Animations */
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeIn {
@@ -109,109 +231,33 @@ button {
     }
 }
 
-.leaderboard-entry {
-    display: flex;
-    justify-content: space-between;
-    width: 240px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 4px 0;
-    font-size: 16px;
-    color: #fff;
-    opacity: 0;
-    transform: translateY(10px);
-    animation: fadeInUp 0.4s forwards;
-}
-
-.player-reveal {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 15px 0;
-}
-
-.player-reveal-entry {
-    font-size: 16px;
-    margin: 4px 0;
-    color: #ddd;
-}
-
-@media (max-width: 600px) {
-    .lobby, .game {
-        padding: 20px;
-        max-width: 90%;
+/* Mobile tweaks */
+@media (max-width: 480px) {
+    .app {
+        padding: 8px;
     }
 
-    h1, h2, h3 {
-        font-size: 1.3rem;
+    .lobby,
+    .game {
+        padding: 14px 12px 16px;
+        max-width: 100%;
+    }
+
+        .lobby h1,
+        .game h1 {
+            font-size: 1.4rem;
+        }
+
+    input,
+    select,
+    button,
+    textarea {
+        max-width: 100%;
+        font-size: 0.9rem;
+        padding: 10px 12px;
     }
 
     .leaderboard-entry {
-        width: 90%;
+        max-width: 100%;
     }
 }
-
-@media (max-width: 480px) {
-    input, select, button, textarea {
-        width: 90%;
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .lobby, .game {
-        padding: 20px;
-        max-width: 90%;
-        margin: 20px auto;
-    }
-}
-.help-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    margin-left: 10px;
-    color: #fff;
-    cursor: pointer;
-}
-
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal {
-    background: #111;
-    padding: 20px 30px;
-    border-radius: 12px;
-    max-width: 90%;
-    text-align: left;
-    box-shadow: 0 0 15px #0f0;
-    color: white;
-}
-
-    .modal h2 {
-        margin-top: 0;
-    }
-
-    .modal ul {
-        padding-left: 20px;
-        list-style: disc;
-    }
-
-    .modal button {
-        margin-top: 15px;
-        background: #1a5d2b;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-    }

@@ -22,11 +22,10 @@ const categories = {
         "Bagel", "Cupcake", "Lollipop", "Muffin", "Cereal", "Nachos", "Meatballs", "Spring Rolls",
         "Dumplings", "Quiche", "Lasagna", "Mac & Cheese", "Fajitas", "Samosa", "Tofu", "Falafel", "Pita", "Hummus",
         "Cornbread", "Tuna", "Grilled Cheese", "Lentil Soup", "Shrimp", "Cake", "Chili", "Risotto",
-        "Curry", "Biryani", "Kebab", "Tortilla", "Gnocchi", "Tabouleh",
-        "Bruschetta", "Teriyaki", "Crepe",
-        "Bisque", "Jambalaya", "Chicken Tenders", "French Fries", "Onion Rings", "Garlic Bread", "Pudding", "Yogurt",
+        "Kebab", "Tortilla",
+        "Teriyaki", "Crepe", "Bisque", "Jambalaya", "Chicken Tenders", "French Fries", "Onion Rings", "Garlic Bread", "Pudding", "Yogurt",
         "Smoothie", "Milkshake", "Chocolate", "Candy", "Cheesecake", "Apple Pie", "Brownie", "Trifle", "Souffle", "Tiramisu",
-        "Eclair", "Baklava", "Muffin", "Sundae", "Fruit Salad", "Jello", "Popsicle", "Toffee", "Marshmallow"
+        "Eclair", "Muffin", "Sundae", "Fruit Salad", "Jello", "Popsicle", "Toffee", "Marshmallow"
     ],
 
     animal: [
@@ -36,10 +35,9 @@ const categories = {
         "Peacock", "Goose", "Duck", "Swan", "Chicken", "Rooster", "Turkey", "Dove", "Seagull", "Whale",
         "Dolphin", "Shark", "Octopus", "Squid", "Crab", "Lobster", "Starfish", "Jellyfish", "Seal", "Walrus",
         "Antelope", "Armadillo", "Badger", "Bat", "Beaver", "Bison", "Boar", "Buffalo", "Camel", "Chameleon",
-        "Cheetah", "Chimpanzee", "Cougar", "Coyote", "Donkey", "Ferret", "Gazelle", "Gorilla", "Hamster", "Hedgehog",
-        "Hyena", "Iguana", "Jackal", "Jaguar", "Leopard",
+        "Cheetah", "Chimpanzee", "Cougar", "Donkey", "Ferret", "Gazelle", "Gorilla", "Hamster", "Jaguar", "Leopard",
         "Moose", "Mule", "Newt", "Ocelot", "Ostrich", "Porcupine", "Possum", "Raccoon", "Raven",
-        "Rhinoceros", "Salamander", "Skunk", "Sloth", "Tapir", "Vulture", "Weasel", "Woodpecker"
+        "Rhinoceros", "Salamander", "Skunk", "Sloth", "Vulture"
     ],
 
     object: [
@@ -235,7 +233,8 @@ io.on("connection", (socket) => {
             correctGuessers: [],
             turnIndex: 0,
             customCategory: null,
-            customWords: []
+            customWords: [],
+            pointLimit: 10
         };
 
         socket.join(roomCode);
@@ -453,32 +452,48 @@ io.on("connection", (socket) => {
         const room = rooms[roomCode];
         if (!room) return;
 
-        const playerIndex = room.players.findIndex(p => p.id === playerId);
-        if (playerIndex !== -1) {
-            room.players[playerIndex].id = socket.id;
+        const existingIndex = room.players.findIndex(p => p.id === playerId);
+
+        if (existingIndex !== -1) {
+            const oldId = room.players[existingIndex].id;
+
+            room.players[existingIndex].id = socket.id;
+
+            if (room.items[oldId]) {
+                room.items[socket.id] = room.items[oldId];
+                delete room.items[oldId];
+            }
+
+            if (room.scores[oldId] !== undefined) {
+                room.scores[socket.id] = room.scores[oldId];
+                delete room.scores[oldId];
+            }
         } else {
             room.players.push({ id: socket.id, name });
         }
 
         io.to(roomCode).emit("update_players", room.players);
 
+        const selfId = socket.id;
+
         const fullState = {
-            players: room.players.map((p, i) => ({
+            players: room.players.map(p => ({
                 name: p.name,
                 id: p.id,
-                item: i === playerIndex ? "???" : room.items[p.id],
+                item: p.id === selfId ? "???" : room.items[p.id],
                 actualItem: room.items[p.id],
                 score: room.scores[p.id] || 0
             })),
             turnIndex: room.turnIndex,
-            playerId: socket.id,
+            playerId: selfId,
             hostId: room.host,
             roomCode,
             chosenCategory: room.chosenCategory
         };
 
-        io.to(socket.id).emit("restore_state", fullState);
+        io.to(selfId).emit("restore_state", fullState);
     });
+
 
     socket.on("disconnect", () => {
         for (const code in rooms) {

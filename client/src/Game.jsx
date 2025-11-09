@@ -5,7 +5,7 @@ const playSound = (filename) => {
     audio.play();
 };
 
-function Game({ playerData, setInGame, setGameOverData, setPhase }) {
+function Game({ playerData, setGameOverData, setPhase }) {
     const [players, setPlayers] = useState(playerData.players || []);
     const [guess, setGuess] = useState("");
     const [feedback, setFeedback] = useState("");
@@ -27,7 +27,6 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
                 setCategoryUsed(chosenCategory);
             }
             setGameOverData(null);
-            setInGame(true);
             console.log("✅ Category used this round:", chosenCategory);
 
         };
@@ -88,7 +87,7 @@ function Game({ playerData, setInGame, setGameOverData, setPhase }) {
             socket.off("update_leaderboard");
         };
 
-    }, [players, setGameOverData, setInGame, setPhase, yourPlayerId]);
+    }, [players, setGameOverData, setPhase, yourPlayerId]);
 
     const handleGuess = () => {
         if (!guess.trim() || hasGuessed) return;
